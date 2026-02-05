@@ -2,6 +2,7 @@ package com.college.SkillCheck.controller.student;
 
 import com.college.SkillCheck.auth.AuthService;
 import com.college.SkillCheck.auth.dto.RegisterStudentDTO;
+import com.college.SkillCheck.auth.dto.UpdateStudentProfileDTO;
 import com.college.SkillCheck.dto.CompetencyResponseDTO;
 import com.college.SkillCheck.dto.EvidenceRequestDTO;
 import com.college.SkillCheck.dto.StudentEvidenceRequestDTO;
@@ -52,7 +53,7 @@ public class StudentController {
 
     @PutMapping("/profile")
     @PreAuthorize("hasRole('STUDENT')")
-    public ResponseEntity<User> updateProfile(@Valid @RequestBody RegisterStudentDTO dto) {
+    public ResponseEntity<User> updateProfile(@Valid @RequestBody UpdateStudentProfileDTO dto) {
         Long studentId = getCurrentUserId();
         return ResponseEntity.ok(authService.updateStudentProfile(studentId, dto));
     }

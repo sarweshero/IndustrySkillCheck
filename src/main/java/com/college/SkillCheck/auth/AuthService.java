@@ -4,6 +4,7 @@ import com.college.SkillCheck.auth.dto.AdminCreateStudentDTO;
 import com.college.SkillCheck.auth.dto.LoginRequestDTO;
 import com.college.SkillCheck.auth.dto.LoginResponseDTO;
 import com.college.SkillCheck.auth.dto.RegisterStudentDTO;
+import com.college.SkillCheck.auth.dto.UpdateStudentProfileDTO;
 import com.college.SkillCheck.exception.BadRequestException;
 import com.college.SkillCheck.exception.ResourceNotFoundException;
 import com.college.SkillCheck.model.User;
@@ -83,15 +84,35 @@ public class AuthService {
         userRepository.save(user);
     }
 
-    public User updateStudentProfile(Long id, RegisterStudentDTO dto) {
+    public User updateStudentProfile(Long id, UpdateStudentProfileDTO dto) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
-        if (!user.getEmail().equalsIgnoreCase(dto.getEmail()) && userRepository.existsByEmail(dto.getEmail())) {
-            throw new BadRequestException("Email already exists");
+        if (dto.getEmail() != null) {
+            String email = dto.getEmail().trim();
+            if (email.isEmpty()) {
+                throw new BadRequestException("Email cannot be blank");
+            }
+            if (!user.getEmail().equalsIgnoreCase(email) && userRepository.existsByEmail(email)) {
+                throw new BadRequestException("Email already exists");
+            }
+            user.setEmail(email);
         }
-        user.setName(dto.getName());
-        user.setEmail(dto.getEmail());
-        user.setPassword(passwordEncoder.encode(dto.getPassword()));
+
+        if (dto.getName() != null) {
+            String name = dto.getName().trim();
+            if (name.isEmpty()) {
+                throw new BadRequestException("Name cannot be blank");
+            }
+            user.setName(name);
+        }
+
+        if (dto.getPassword() != null) {
+            String password = dto.getPassword().trim();
+            if (password.length() < 6) {
+                throw new BadRequestException("Password must be at least 6 characters");
+            }
+            user.setPassword(passwordEncoder.encode(password));
+        }
         return userRepository.save(user);
     }
 
