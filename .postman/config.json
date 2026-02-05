@@ -1,0 +1,15 @@
+{
+  "workspace": {
+    "id": ""
+  },
+  "entities": {
+    "environments": [],
+    "flows": [],
+    "globals": [],
+    "mocks": [],
+    "specs": [],
+    "collections": [
+      "..\\SkillChecker.postman_collection.json"
+    ]
+  }
+}

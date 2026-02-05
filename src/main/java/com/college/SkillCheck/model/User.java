@@ -1,6 +1,7 @@
 package com.college.SkillCheck.model;
 
 import jakarta.persistence.Column;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,6 +25,10 @@ public class User {
 
     @Column(nullable = false)
     private String role;
+
+    @JsonIgnore
+    @Column
+    private String password;
 
     @Column(nullable = false)
     private boolean active;
@@ -64,6 +69,14 @@ public class User {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public boolean isActive() {

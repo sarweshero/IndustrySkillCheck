@@ -39,8 +39,22 @@ public class EvidenceService {
     public Evidence submitEvidence(EvidenceRequestDTO dto) {
         User student = userRepository.findById(dto.getStudentId())
                 .orElseThrow(() -> new ResourceNotFoundException("Student not found"));
+        return submitEvidenceForStudent(dto, student);
+    }
+
+    @Transactional
+    public Evidence submitEvidenceForStudent(EvidenceRequestDTO dto, Long studentId) {
+        User student = userRepository.findById(studentId)
+                .orElseThrow(() -> new ResourceNotFoundException("Student not found"));
+        return submitEvidenceForStudent(dto, student);
+    }
+
+    private Evidence submitEvidenceForStudent(EvidenceRequestDTO dto, User student) {
         if (!"STUDENT".equalsIgnoreCase(student.getRole())) {
             throw new BadRequestException("Evidence can only be submitted for students");
+        }
+        if (dto.getSkills() == null || dto.getSkills().isEmpty()) {
+            throw new BadRequestException("At least one skill is required");
         }
         Evidence evidence = new Evidence();
         evidence.setStudent(student);
@@ -51,6 +65,9 @@ public class EvidenceService {
 
         List<EvidenceSkill> evidenceSkills = new ArrayList<>();
         for (EvidenceRequestDTO.EvidenceSkillRequest skillRequest : dto.getSkills()) {
+            if (skillRequest.getSkillId() == null || skillRequest.getWeight() == null) {
+                throw new BadRequestException("Skill id and weight are required");
+            }
             Skill skill = skillRepository.findById(skillRequest.getSkillId())
                     .orElseThrow(() -> new ResourceNotFoundException("Skill not found"));
             EvidenceSkill evidenceSkill = new EvidenceSkill();

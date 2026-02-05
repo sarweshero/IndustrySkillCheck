@@ -1,6 +1,8 @@
 package com.college.SkillCheck.service;
 
 import com.college.SkillCheck.dto.CompetencyResponseDTO;
+import com.college.SkillCheck.dto.SkillSummaryDTO;
+import com.college.SkillCheck.dto.TopStudentDTO;
 import com.college.SkillCheck.exception.ResourceNotFoundException;
 import com.college.SkillCheck.model.Competency;
 import com.college.SkillCheck.model.EvidenceSkill;
@@ -81,6 +83,50 @@ public class CompetencyService {
         Competency competency = competencyRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Competency not found"));
         competencyRepository.delete(competency);
+    }
+
+    @Transactional(readOnly = true)
+    public List<TopStudentDTO> getTopStudents() {
+        List<Competency> competencies = competencyRepository.findAll();
+        Map<Long, Integer> scoreByStudent = new HashMap<>();
+        Map<Long, String> nameByStudent = new HashMap<>();
+        for (Competency competency : competencies) {
+            User student = competency.getStudent();
+            if (student != null) {
+                scoreByStudent.put(student.getId(),
+                        scoreByStudent.getOrDefault(student.getId(), 0) + competency.getScore());
+                nameByStudent.put(student.getId(), student.getName());
+            }
+        }
+        List<TopStudentDTO> results = new ArrayList<>();
+        for (Map.Entry<Long, Integer> entry : scoreByStudent.entrySet()) {
+            Long studentId = entry.getKey();
+            results.add(new TopStudentDTO(studentId, nameByStudent.get(studentId), entry.getValue()));
+        }
+        results.sort((a, b) -> Integer.compare(b.getTotalScore(), a.getTotalScore()));
+        return results;
+    }
+
+    @Transactional(readOnly = true)
+    public List<SkillSummaryDTO> getSkillSummary() {
+        List<Competency> competencies = competencyRepository.findAll();
+        Map<Long, Integer> scoreBySkill = new HashMap<>();
+        Map<Long, String> nameBySkill = new HashMap<>();
+        for (Competency competency : competencies) {
+            Skill skill = competency.getSkill();
+            if (skill != null) {
+                scoreBySkill.put(skill.getId(),
+                        scoreBySkill.getOrDefault(skill.getId(), 0) + competency.getScore());
+                nameBySkill.put(skill.getId(), skill.getName());
+            }
+        }
+        List<SkillSummaryDTO> results = new ArrayList<>();
+        for (Map.Entry<Long, Integer> entry : scoreBySkill.entrySet()) {
+            Long skillId = entry.getKey();
+            results.add(new SkillSummaryDTO(skillId, nameBySkill.get(skillId), entry.getValue()));
+        }
+        results.sort((a, b) -> Integer.compare(b.getTotalScore(), a.getTotalScore()));
+        return results;
     }
 
     private CompetencyResponseDTO toResponse(Competency competency) {
