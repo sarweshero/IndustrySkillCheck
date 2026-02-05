@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class EvidenceService {
@@ -34,6 +35,7 @@ public class EvidenceService {
         this.userRepository = userRepository;
     }
 
+    @Transactional
     public Evidence submitEvidence(EvidenceRequestDTO dto) {
         User student = userRepository.findById(dto.getStudentId())
                 .orElseThrow(() -> new ResourceNotFoundException("Student not found"));
@@ -70,6 +72,7 @@ public class EvidenceService {
         return evidenceRepository.findByStudent_Id(studentId);
     }
 
+    @Transactional
     public void deleteEvidence(Long id) {
         Evidence evidence = getEvidenceById(id);
         evidenceSkillRepository.deleteByEvidence_Id(evidence.getId());

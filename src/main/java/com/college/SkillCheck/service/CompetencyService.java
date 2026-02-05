@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,14 +49,7 @@ public class CompetencyService {
         for (Map.Entry<Skill, Integer> entry : scoreMap.entrySet()) {
             Skill skill = entry.getKey();
             Integer score = entry.getValue();
-            Competency competency = competencyRepository.findByStudentIdAndSkillId(studentId, skill.getId())
-                    .orElseGet(Competency::new);
-            competency.setStudent(student);
-            competency.setSkill(skill);
-            competency.setScore(score);
-            competency.setLastUpdated(LocalDateTime.now());
-            Competency saved = competencyRepository.save(competency);
-            responses.add(toResponse(saved));
+            responses.add(toResponse(saveCompetency(student, skill, score)));
         }
         return responses;
     }
@@ -98,5 +92,26 @@ public class CompetencyService {
                 competency.getScore(),
                 competency.getLastUpdated()
         );
+    }
+
+    private Competency saveCompetency(User student, Skill skill, Integer score) {
+        Competency competency = competencyRepository.findByStudentIdAndSkillId(student.getId(), skill.getId())
+                .orElse(null);
+        if (competency == null) {
+            Competency newCompetency = new Competency();
+            newCompetency.setStudent(student);
+            newCompetency.setSkill(skill);
+            newCompetency.setScore(score);
+            newCompetency.setLastUpdated(LocalDateTime.now());
+            try {
+                return competencyRepository.save(newCompetency);
+            } catch (DataIntegrityViolationException ex) {
+                competency = competencyRepository.findByStudentIdAndSkillId(student.getId(), skill.getId())
+                        .orElseThrow(() -> new ResourceNotFoundException("Competency not found after conflict"));
+            }
+        }
+        competency.setScore(score);
+        competency.setLastUpdated(LocalDateTime.now());
+        return competencyRepository.save(competency);
     }
 }
