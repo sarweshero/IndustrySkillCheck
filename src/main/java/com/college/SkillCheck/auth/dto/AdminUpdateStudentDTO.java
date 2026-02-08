@@ -1,37 +1,33 @@
-package com.college.SkillCheck.dto;
+package com.college.SkillCheck.auth.dto;
 
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import java.util.List;
 import org.hibernate.validator.constraints.URL;
 
-public class UserRequestDTO {
+public class AdminUpdateStudentDTO {
 
-    @NotBlank
     @Size(max = 100)
     private String name;
 
-    @NotBlank
     @Email
     @Size(max = 150)
     private String email;
 
-    @NotBlank
-    @Size(max = 50)
-    private String role;
+    @Size(min = 6, max = 100)
+    private String password;
 
-    @NotBlank
+    @Size(max = 50)
+    private String dept;
+
+    private Boolean active;
+
     @Size(max = 2000)
     private String bio;
-
-    @NotBlank
-    @Size(max = 100)
-    private String dept;
 
     @Min(1)
     @Max(10)
@@ -62,7 +58,7 @@ public class UserRequestDTO {
     @URL
     private String profilePictureUrl;
 
-    public UserRequestDTO() {
+    public AdminUpdateStudentDTO() {
     }
 
     public String getName() {
@@ -77,6 +73,18 @@ public class UserRequestDTO {
         return email;
     }
 
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     public String getDept() {
         return dept;
     }
@@ -85,40 +93,20 @@ public class UserRequestDTO {
         this.dept = dept;
     }
 
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
+
     public String getBio() {
         return bio;
     }
 
     public void setBio(String bio) {
         this.bio = bio;
-    }
-
-    public void setdept(String dept){
-        this.dept = dept;
-    }
-
-    public String getdept(){
-        return dept;
-    }
-
-    public void setbio(String bio){
-        this.bio = bio;
-    }
-
-    public String getbio(){
-        return bio;
-    }
-    
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
     }
 
     public Integer getYearOfStudy() {

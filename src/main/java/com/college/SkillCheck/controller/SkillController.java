@@ -28,7 +28,7 @@ public class SkillController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    // @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Skill> createSkill(@Valid @RequestBody SkillRequestDTO dto) {
         Skill created = skillService.createSkill(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);

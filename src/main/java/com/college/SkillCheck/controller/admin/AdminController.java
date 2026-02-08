@@ -2,6 +2,7 @@ package com.college.SkillCheck.controller.admin;
 
 import com.college.SkillCheck.auth.AuthService;
 import com.college.SkillCheck.auth.dto.AdminCreateStudentDTO;
+import com.college.SkillCheck.auth.dto.AdminUpdateStudentDTO;
 import com.college.SkillCheck.dto.CompetencyResponseDTO;
 import com.college.SkillCheck.dto.SkillRequestDTO;
 import com.college.SkillCheck.dto.SkillSummaryDTO;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -40,6 +42,17 @@ public class AdminController {
         this.competencyService = competencyService;
     }
 
+    @GetMapping("/students")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<List<User>> getStudents(@RequestParam(name = "active", defaultValue = "true") boolean active) {
+        return ResponseEntity.ok(authService.getStudents(active));
+    }
+
+    @GetMapping("/students/{id}")
+    public ResponseEntity<User> getStudent(@PathVariable Long id) {
+        return ResponseEntity.ok(authService.AdmingetStudentById(id));
+    }
+
     @PostMapping("/students")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<User> createStudent(@Valid @RequestBody AdminCreateStudentDTO dto) {
@@ -49,7 +62,7 @@ public class AdminController {
 
     @PutMapping("/students/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<User> updateStudent(@PathVariable Long id, @Valid @RequestBody AdminCreateStudentDTO dto) {
+    public ResponseEntity<User> updateStudent(@PathVariable Long id, @Valid @RequestBody AdminUpdateStudentDTO dto) {
         return ResponseEntity.ok(authService.adminUpdateStudent(id, dto));
     }
 

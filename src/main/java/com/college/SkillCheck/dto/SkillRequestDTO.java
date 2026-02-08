@@ -9,6 +9,9 @@ public class SkillRequestDTO {
     @Size(max = 100)
     private String name;
 
+    @Size(max = 2000)
+    private String category;
+
     @NotBlank
     @Size(max = 255)
     private String description;
@@ -26,6 +29,14 @@ public class SkillRequestDTO {
 
     public String getDescription() {
         return description;
+    }
+
+    public String getCategory(){
+        return category;
+    }
+
+    public void setCategory(String category){
+        this.category = category;
     }
 
     public void setDescription(String description) {

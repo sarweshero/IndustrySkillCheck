@@ -6,7 +6,15 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Size;
+
 import java.time.LocalDateTime;
+import java.util.List;
+
+import org.hibernate.annotations.CollectionId;
+import org.hibernate.validator.constraints.URL;
 
 @Entity
 @Table(name = "skills")
@@ -27,6 +35,10 @@ public class Skill {
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
+
+    @Size(max = 500)
+    @Column(nullable = true)
+    private String category;
 
     public Skill() {
     }
@@ -65,6 +77,14 @@ public class Skill {
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
+    }
+
+    public void setCategory(String category){
+        this.category = category;
+    }
+
+    public String getCategory(){
+        return category;
     }
 
     public void setCreatedAt(LocalDateTime createdAt) {

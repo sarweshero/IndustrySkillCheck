@@ -24,7 +24,9 @@ public class SkillService {
         }
         Skill skill = new Skill();
         skill.setName(dto.getName());
+        
         skill.setDescription(dto.getDescription());
+        skill.setCategory(dto.getCategory());
         skill.setActive(true);
         skill.setCreatedAt(LocalDateTime.now());
         return skillRepository.save(skill);
@@ -37,6 +39,7 @@ public class SkillService {
         }
         skill.setName(dto.getName());
         skill.setDescription(dto.getDescription());
+        skill.setCategory(dto.getCategory());
         return skillRepository.save(skill);
     }
 
